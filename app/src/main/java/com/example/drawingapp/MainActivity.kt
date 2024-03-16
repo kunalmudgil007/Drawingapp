@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.media.MediaScannerConnection
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -21,6 +22,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
@@ -65,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
                         openGalleryLauncher.launch(pickIntent)
                     }else{
-                        if (permissionName== Manifest.permission.READ_EXTERNAL_STORAGE){
+                        if (permissionName== Manifest.permission.READ_MEDIA_IMAGES){
                             Toast.makeText(
                                 this@MainActivity,
                                 "Oops you just denied the permission.",
@@ -80,6 +82,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -143,18 +146,18 @@ class MainActivity : AppCompatActivity() {
 
         val smallBtn : ImageButton = brushDialog.findViewById(R.id.ib_small_brush)
         smallBtn.setOnClickListener {
-            drawingView?.setSizeForBrush(10.toFloat())
+            drawingView?.setSizeForBrush(2.toFloat())
             brushDialog.dismiss()
         }
             val mediumBtn: ImageButton = brushDialog.findViewById(R.id.ib_medium_brush)
             mediumBtn.setOnClickListener {
-                drawingView?.setSizeForBrush(20.toFloat())
+                drawingView?.setSizeForBrush(5.toFloat())
                 brushDialog.dismiss()
 
             }
                 val largeBtn: ImageButton = brushDialog.findViewById(R.id.ib_large_brush)
                 largeBtn.setOnClickListener {
-                    drawingView?.setSizeForBrush(30.toFloat())
+                    drawingView?.setSizeForBrush(10.toFloat())
                     brushDialog.dismiss()
 
 
@@ -178,24 +181,29 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun isReadStorageAllowed(): Boolean{
         val result = ContextCompat.checkSelfPermission(
-            this,Manifest.permission.READ_EXTERNAL_STORAGE
+            this,Manifest.permission.READ_MEDIA_IMAGES
         )
         return result == PackageManager.PERMISSION_GRANTED
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun requestStoragePermission(){
         if (ActivityCompat.shouldShowRequestPermissionRationale(
             this,
-            Manifest.permission.READ_EXTERNAL_STORAGE)
+           // Manifest.permission.READ_EXTERNAL_STORAGE)
+
+                Manifest.permission.READ_MEDIA_IMAGES)
+
             ){
             showRationaleDialog("Drawing App","Drawing App needs to Access Your External Storage")
         }else{
             requestPermission.launch(arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE ,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.READ_MEDIA_IMAGES ,
+             //   Manifest.permission.WRITE_EXTERNAL_STORAGE
             ))
         }
 
